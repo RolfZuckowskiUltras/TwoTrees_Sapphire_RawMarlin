@@ -751,7 +751,7 @@
 //#define NUM_Z_STEPPER_DRIVERS 1   // (1-4) Z options change based on how many
 
 //For DUAL-Z
-#define NUM_Z_STEPPER_DRIVERS 2   // (1-4) Z options change based on how many
+#define NUM_Z_STEPPER_DRIVERS 1   // (1-4) Z options change based on how many
 
 #if NUM_Z_STEPPER_DRIVERS > 1
   // Enable if Z motor direction signals are the opposite of Z1
