@@ -1,14 +1,23 @@
-# Marlin 3D Printer Firmware
+Warning: Work still in Progress...
 
-![GitHub](https://img.shields.io/github/license/marlinfirmware/marlin.svg)
-![GitHub contributors](https://img.shields.io/github/contributors/marlinfirmware/marlin.svg)
-![GitHub Release Date](https://img.shields.io/github/release-date/marlinfirmware/marlin.svg)
-[![Build Status](https://github.com/MarlinFirmware/Marlin/workflows/CI/badge.svg?branch=bugfix-2.0.x)](https://github.com/MarlinFirmware/Marlin/actions)
+# About this Repo
+This repo does contain different preconfigured `Marlin 2.0 Stable (2.0.9.3)` fimrware versions for the TwoTrees Sapphire Plus 3D-Printer. There are several different revisitions of this printer out there, so I did multiple branches for different printer configurations. The Sapphire Pro (New Name: SP-3) and newer revisions of the printer (e.g. SP-5) are not supported yet, since tested information is missing for me. If you've got a Printer: Please feel free to do a pull-request, when your firmware is working.
 
-<img align="right" width=175 src="buildroot/share/pixmaps/logo/marlin-250.png" />
+<img align="center" width=1200 src="/readMeImgs/Interface.jpg" />
 
-Additional documentation can be found at the [Marlin Home Page](https://marlinfw.org/).
-Please test this firmware and let us know if it misbehaves in any way. Volunteers are standing by!
+# Precompiled firmwares
+Precompiled fimrwares can be found on the [Releases pages](https://github.com/RolfZuckowskiUltras/TwoTrees_Sapphire_RawMarlin/releases). In future, I'm probably not going to share compiled firmwares for the BL-Touch-Version, since those require further tuning after the installation. So you're betther off to fork of your own repo with your finetuned values.
+
+# Supported Versions
+
+### Sapphire Plus
+Branch Name |Z-Axis Type|Hotend|BL-Touch|Teststate
+  --------|---|---|---|-------
+  
+  [Arduino AVR](https://www.arduino.cc/)|ATmega|RAMPS, Melzi, RAMBo
+
+
+<img align="center" width=1200 src="/readMeImgs/Interface.jpg" />
 
 ## Marlin 2.0
 
