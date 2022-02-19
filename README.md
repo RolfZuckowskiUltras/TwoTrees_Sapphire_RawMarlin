@@ -1,5 +1,3 @@
-Warning: Work still in Progress...
-
 # About this Repo
 This repo does contain different preconfigured `Marlin 2.0 Stable (2.0.9.3)` fimrware versions for the TwoTrees Sapphire Plus 3D-Printer. This is a non-offical project. There are several different revisions of this printer out there, so I did multiple branches for different printer configurations. The Sapphire Pro (New Name: SP-3) and newer revisions of the printer (e.g. SP-5) are not supported yet, since tested information is missing for me. If you've got a Printer: Please feel free to do a pull-request, when your firmware is working.
 
