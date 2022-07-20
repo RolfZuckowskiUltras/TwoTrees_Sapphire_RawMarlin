@@ -46,9 +46,9 @@
 #endif
 
 #if ENABLED(I2C_EEPROM)
-  #define MARLIN_EEPROM_SIZE              0x8000  // 32Kb
+  #define MARLIN_EEPROM_SIZE              0x8000  // 32K
 #elif ENABLED(SDCARD_EEPROM_EMULATION)
-  #define MARLIN_EEPROM_SIZE               0x800  // 2Kb
+  #define MARLIN_EEPROM_SIZE               0x800  // 2K
 #endif
 
 //
@@ -272,7 +272,7 @@
 #define EXP2_09_PIN                        P0_15
 #define EXP2_10_PIN                        P0_17
 
-#if EITHER(HAS_DWIN_E3V2, IS_DWIN_MARLINUI)
+#if HAS_DWIN_E3V2 || IS_DWIN_MARLINUI
 
   // RET6 DWIN ENCODER LCD
   #define BTN_ENC                    EXP1_06_PIN
@@ -286,7 +286,9 @@
 #elif HAS_WIRED_LCD
 
   #if ENABLED(ANET_FULL_GRAPHICS_LCD_ALT_WIRING)
-    #error "CAUTION! ANET_FULL_GRAPHICS_LCD_ALT_WIRING requires wiring modifications. See 'pins_BTT_SKR_V1_4.h' for details. Comment out this line to continue."
+    #ifndef NO_CONTROLLER_CUSTOM_WIRING_WARNING
+      #error "CAUTION! ANET_FULL_GRAPHICS_LCD_ALT_WIRING requires wiring modifications. See 'pins_BTT_SKR_V1_4.h' for details. (Define NO_CONTROLLER_CUSTOM_WIRING_WARNING to suppress this warning.)"
+    #endif
 
     /**
      * 1. Cut the tab off the LCD connector so it can be plugged into the "EXP1" connector the other way.
@@ -318,7 +320,9 @@
     #define BEEPER_PIN               EXP1_03_PIN
 
   #elif ENABLED(ANET_FULL_GRAPHICS_LCD)
-    #error "CAUTION! ANET_FULL_GRAPHICS_LCD requires wiring modifications. See 'pins_BTT_SKR_V1_4.h' for details. Comment out this line to continue."
+    #ifndef NO_CONTROLLER_CUSTOM_WIRING_WARNING
+      #error "CAUTION! ANET_FULL_GRAPHICS_LCD requires wiring modifications. See 'pins_BTT_SKR_V1_4.h' for details. (Define NO_CONTROLLER_CUSTOM_WIRING_WARNING to suppress this warning.)"
+    #endif
 
    /**
     * 1. Cut the tab off the LCD connector so it can be plugged into the "EXP1" connector the other way.
