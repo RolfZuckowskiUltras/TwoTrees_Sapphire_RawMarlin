@@ -41,7 +41,7 @@
   #define SOFT_I2C_EEPROM                         // Force the use of Software I2C
   #define I2C_SCL_PIN                       PB6
   #define I2C_SDA_PIN                       PB7
-  #define MARLIN_EEPROM_SIZE              0x1000  // 4KB
+  #define MARLIN_EEPROM_SIZE              0x1000  // 4K
 #endif
 
 //
@@ -156,7 +156,7 @@
 #define EXP1_09_PIN                         PA15
 #define EXP1_03_PIN                         PD6
 
-#if EITHER(DWIN_CREALITY_LCD, IS_DWIN_MARLINUI)
+#if HAS_DWIN_E3V2 || IS_DWIN_MARLINUI
   /**
    *        ------                ------                ------
    * (ENT) |10  9 | (BEEP)       |10  9 |              |10  9 |
@@ -170,7 +170,9 @@
    * All pins are labeled as printed on DWIN PCB. Connect TX-TX, A-A and so on.
    */
 
-  #error "DWIN_CREALITY_LCD requires a custom cable, see diagram above this line. Comment out this line to continue."
+  #ifndef NO_CONTROLLER_CUSTOM_WIRING_WARNING
+    #error "CAUTION! DWIN_CREALITY_LCD requires a custom cable, see diagram above this line. (Define NO_CONTROLLER_CUSTOM_WIRING_WARNING to suppress this warning.)"
+  #endif
 
   #define BEEPER_PIN                 EXP1_09_PIN
   #define BTN_EN1                    EXP1_03_PIN
@@ -193,7 +195,9 @@
 
   #elif ENABLED(ZONESTAR_LCD)                     // ANET A8 LCD Controller - Must convert to 3.3V - CONNECTING TO 5V WILL DAMAGE THE BOARD!
 
-    #error "CAUTION! ZONESTAR_LCD requires wiring modifications. See 'pins_BTT_SKR_MINI_E3_common.h' for details. Comment out this line to continue."
+    #ifndef NO_CONTROLLER_CUSTOM_WIRING_WARNING
+      #error "CAUTION! ZONESTAR_LCD requires wiring modifications. See 'pins_BTT_SKR_MINI_E3_common.h' for details. (Define NO_CONTROLLER_CUSTOM_WIRING_WARNING to suppress this warning.)"
+    #endif
 
     #define LCD_PINS_RS                     PB9
     #define LCD_PINS_ENABLE          EXP1_09_PIN
@@ -221,7 +225,9 @@
 
     #if ENABLED(TFTGLCD_PANEL_SPI)
 
-      #error "CAUTION! TFTGLCD_PANEL_SPI requires wiring modifications. See 'pins_BTT_SKR_MINI_E3_common.h' for details. Comment out this line to continue."
+      #ifndef NO_CONTROLLER_CUSTOM_WIRING_WARNING
+        #error "CAUTION! TFTGLCD_PANEL_SPI requires wiring modifications. See 'pins_BTT_SKR_MINI_E3_common.h' for details. (Define NO_CONTROLLER_CUSTOM_WIRING_WARNING to suppress this warning.)"
+      #endif
 
       /**
        * TFTGLCD_PANEL_SPI display pinout
@@ -256,15 +262,62 @@
 
     #endif
 
+  #elif ENABLED(FYSETC_MINI_12864_2_1)
+
+      #ifndef NO_CONTROLLER_CUSTOM_WIRING_WARNING
+        #error "CAUTION! FYSETC_MINI_12864_2_1 and clones require wiring modifications. See 'pins_BTT_SKR_MINI_E3_V3_0.h' for details. Define NO_CONTROLLER_CUSTOM_WIRING_WARNING to suppress this warning"
+      #endif
+
+      /**
+       *
+       *                 Board                               Display
+       *                 ------                               ------
+       *    (EN2)  PB5  |10  9 | PA15(BTN_ENC)            5V |10  9 | GND
+       *  (LCD_CS) PA9  | 8  7 | RST (RESET)              -- | 8  7 | --
+       *  (LCD_A0) PA10 |#6  5 | PB9 (EN1)            (DIN)  | 6  5#| (RESET)
+       *  (LCD_SCK)PB8  | 4  3 | PD6 (MOSI)         (LCD_A0) | 4  3 | (LCD_CS)
+       *            GND | 2  1 | 5V                (BTN_ENC) | 2  1 | --
+       *                 ------                               ------
+       *                  EXP1                                 EXP1
+       *
+       *                                                      ------
+       *                                                  -- |10  9 | --
+       *                   ---                       (RESET) | 8  7 | --
+       *                  | 3 |                      (MOSI)  | 6  5#| (EN2)
+       *                  | 2 | (DIN)                     -- | 4  3 | (EN1)
+       *                  | 1 |                     (LCD_SCK)| 2  1 | --
+       *                   ---                                ------
+       *                Neopixel                               EXP2
+       *
+       * Needs custom cable. Connect EN2-EN2, LCD_CS-LCD_CS and so on.
+       *
+       * Check twice index position!!! (marked as # here)
+       * On BTT boards pins from IDC10 connector are numbered in unusual order.
+       */
+    #define BTN_ENC                  EXP1_09_PIN
+    #define BTN_EN1                         PB9
+    #define BTN_EN2                         PB5
+    #define BEEPER_PIN                      -1
+
+    #define DOGLCD_CS                       PA9
+    #define DOGLCD_A0                       PA10
+    #define DOGLCD_SCK                      PB8
+    #define DOGLCD_MOSI                     PD6
+
+    #define FORCE_SOFT_SPI
+    #define LCD_BACKLIGHT_PIN               -1
+
   #else
-    #error "Only CR10_STOCKDISPLAY, ZONESTAR_LCD, ENDER2_STOCKDISPLAY, MKS_MINI_12864, and TFTGLCD_PANEL_(SPI|I2C) are currently supported on the BIGTREE_SKR_MINI_E3."
+    #error "Only CR10_STOCKDISPLAY, ZONESTAR_LCD, ENDER2_STOCKDISPLAY, MKS_MINI_12864, FYSETC_MINI_12864_2_1, and TFTGLCD_PANEL_(SPI|I2C) are currently supported on the BIGTREE_SKR_MINI_E3."
   #endif
 
 #endif // HAS_WIRED_LCD
 
 #if BOTH(TOUCH_UI_FTDI_EVE, LCD_FYSETC_TFT81050)
 
-  #error "CAUTION! LCD_FYSETC_TFT81050 requires wiring modifications. See 'pins_BTT_SKR_MINI_E3_common.h' for details. Comment out this line to continue."
+  #ifndef NO_CONTROLLER_CUSTOM_WIRING_WARNING
+    #error "CAUTION! LCD_FYSETC_TFT81050 requires wiring modifications. See 'pins_BTT_SKR_MINI_E3_common.h' for details. (Define NO_CONTROLLER_CUSTOM_WIRING_WARNING to suppress this warning.)"
+  #endif
 
   /**
    * FYSETC TFT TFT81050 display pinout
