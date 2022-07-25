@@ -141,13 +141,12 @@ public:
    * Enqueue and return only when commands are actually enqueued
    */
   static void enqueue_one_now(const char * const cmd);
-  static void enqueue_one_now(FSTR_P const fcmd);
 
   /**
    * Attempt to enqueue a single G-code command
    * and return 'true' if successful.
    */
-  static bool enqueue_one(FSTR_P const fcmd);
+  static bool enqueue_one(FSTR_P const fgcode);
 
   /**
    * Enqueue with Serial Echo

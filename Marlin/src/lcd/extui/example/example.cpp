@@ -59,8 +59,8 @@ namespace ExtUI {
   void onStatusChanged(const char * const msg) {}
 
   void onHomingStart() {}
-  void onHomingDone() {}
-  void onPrintDone() {}
+  void onHomingComplete() {}
+  void onPrintFinished() {}
 
   void onFactoryReset() {}
 
@@ -88,19 +88,18 @@ namespace ExtUI {
     // Called after loading or resetting stored settings
   }
 
-  void onSettingsStored(bool success) {
+  void onConfigurationStoreWritten(bool success) {
     // Called after the entire EEPROM has been written,
     // whether successful or not.
   }
 
-  void onSettingsLoaded(bool success) {
+  void onConfigurationStoreRead(bool success) {
     // Called after the entire EEPROM has been read,
     // whether successful or not.
   }
 
   #if HAS_MESH
-    void onLevelingStart() {}
-    void onLevelingDone() {}
+    void onMeshLevelingStart() {}
 
     void onMeshUpdate(const int8_t xpos, const int8_t ypos, const_float_t zval) {
       // Called when any mesh points are updated

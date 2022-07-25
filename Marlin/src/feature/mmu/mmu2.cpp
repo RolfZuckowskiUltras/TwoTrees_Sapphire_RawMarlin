@@ -143,11 +143,6 @@ uint8_t MMU2::get_current_tool() {
   #define FILAMENT_PRESENT() (READ(FIL_RUNOUT1_PIN) != FIL_RUNOUT1_STATE)
 #endif
 
-void mmu2_attn_buzz(const bool two=false) {
-  BUZZ(200, 404);
-  if (two) { BUZZ(10, 0); BUZZ(200, 404); }
-}
-
 void MMU2::mmu_loop() {
 
   switch (state) {
@@ -530,7 +525,7 @@ static void mmu2_not_responding() {
             while (!thermalManager.wait_for_hotend(active_extruder, false)) safe_delay(100);
             load_filament_to_nozzle(index);
           #else
-            ERR_BUZZ();
+            BUZZ(400, 40);
           #endif
         } break;
 
@@ -549,7 +544,7 @@ static void mmu2_not_responding() {
               active_extruder = 0;
             }
           #else
-            ERR_BUZZ();
+            BUZZ(400, 40);
           #endif
         } break;
 
@@ -618,7 +613,7 @@ static void mmu2_not_responding() {
           while (!thermalManager.wait_for_hotend(active_extruder, false)) safe_delay(100);
           load_filament_to_nozzle(index);
         #else
-          ERR_BUZZ();
+          BUZZ(400, 40);
         #endif
       } break;
 
@@ -638,7 +633,7 @@ static void mmu2_not_responding() {
           extruder = index;
           active_extruder = 0;
         #else
-          ERR_BUZZ();
+          BUZZ(400, 40);
         #endif
       } break;
 
@@ -712,7 +707,7 @@ static void mmu2_not_responding() {
           while (!thermalManager.wait_for_hotend(active_extruder, false)) safe_delay(100);
           load_filament_to_nozzle(index);
         #else
-          ERR_BUZZ();
+          BUZZ(400, 40);
         #endif
       } break;
 
@@ -731,7 +726,7 @@ static void mmu2_not_responding() {
           extruder = index;
           active_extruder = 0;
         #else
-          ERR_BUZZ();
+          BUZZ(400, 40);
         #endif
       } break;
 
@@ -816,26 +811,25 @@ void MMU2::manage_response(const bool move_axes, const bool turn_off_nozzle) {
       if (turn_off_nozzle && resume_hotend_temp) {
         thermalManager.setTargetHotend(resume_hotend_temp, active_extruder);
         LCD_MESSAGE(MSG_HEATING);
-        ERR_BUZZ();
+        BUZZ(200, 40);
 
         while (!thermalManager.wait_for_hotend(active_extruder, false)) safe_delay(1000);
       }
 
-      LCD_MESSAGE(MSG_MMU2_RESUMING);
-      mmu2_attn_buzz(true);
-
-      #pragma GCC diagnostic push
-      #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
-
       if (move_axes && all_axes_homed()) {
+        LCD_MESSAGE(MSG_MMU2_RESUMING);
+        BUZZ(198, 404); BUZZ(4, 0); BUZZ(198, 404);
+
         // Move XY to starting position, then Z
         do_blocking_move_to_xy(resume_position, feedRate_t(NOZZLE_PARK_XY_FEEDRATE));
 
         // Move Z_AXIS to saved position
         do_blocking_move_to_z(resume_position.z, feedRate_t(NOZZLE_PARK_Z_FEEDRATE));
       }
-
-      #pragma GCC diagnostic pop
+      else {
+        BUZZ(198, 404); BUZZ(4, 0); BUZZ(198, 404);
+        LCD_MESSAGE(MSG_MMU2_RESUMING);
+      }
     }
   }
 }
@@ -904,7 +898,7 @@ void MMU2::load_filament(const uint8_t index) {
 
   command(MMU_CMD_L0 + index);
   manage_response(false, false);
-  mmu2_attn_buzz();
+  BUZZ(200, 404);
 }
 
 /**
@@ -915,7 +909,7 @@ bool MMU2::load_filament_to_nozzle(const uint8_t index) {
   if (!_enabled) return false;
 
   if (thermalManager.tooColdToExtrude(active_extruder)) {
-    mmu2_attn_buzz();
+    BUZZ(200, 404);
     LCD_ALERTMESSAGE(MSG_HOTEND_TOO_COLD);
     return false;
   }
@@ -930,7 +924,7 @@ bool MMU2::load_filament_to_nozzle(const uint8_t index) {
     extruder = index;
     active_extruder = 0;
     load_to_nozzle();
-    mmu2_attn_buzz();
+    BUZZ(200, 404);
   }
   return success;
 }
@@ -939,7 +933,7 @@ bool MMU2::load_filament_to_nozzle(const uint8_t index) {
  * Load filament to nozzle of multimaterial printer
  *
  * This function is used only after T? (user select filament) and M600 (change filament).
- * It is not used after T0 .. T4 command (select filament), in such case, G-code is responsible for loading
+ * It is not used after T0 .. T4 command (select filament), in such case, gcode is responsible for loading
  * filament to nozzle.
  */
 void MMU2::load_to_nozzle() {
@@ -951,7 +945,7 @@ bool MMU2::eject_filament(const uint8_t index, const bool recover) {
   if (!_enabled) return false;
 
   if (thermalManager.tooColdToExtrude(active_extruder)) {
-    mmu2_attn_buzz();
+    BUZZ(200, 404);
     LCD_ALERTMESSAGE(MSG_HOTEND_TOO_COLD);
     return false;
   }
@@ -967,11 +961,12 @@ bool MMU2::eject_filament(const uint8_t index, const bool recover) {
 
   if (recover)  {
     LCD_MESSAGE(MSG_MMU2_EJECT_RECOVER);
-    mmu2_attn_buzz();
+    BUZZ(200, 404);
     TERN_(HOST_PROMPT_SUPPORT, hostui.prompt_do(PROMPT_USER_CONTINUE, F("MMU2 Eject Recover"), FPSTR(CONTINUE_STR)));
     TERN_(EXTENSIBLE_UI, ExtUI::onUserConfirmRequired(F("MMU2 Eject Recover")));
     TERN_(HAS_RESUME_CONTINUE, wait_for_user_response());
-    mmu2_attn_buzz(true);
+    BUZZ(200, 404);
+    BUZZ(200, 404);
 
     command(MMU_CMD_R0);
     manage_response(false, false);
@@ -984,7 +979,7 @@ bool MMU2::eject_filament(const uint8_t index, const bool recover) {
 
   set_runout_valid(false);
 
-  mmu2_attn_buzz();
+  BUZZ(200, 404);
 
   stepper.disable_extruder();
 
@@ -999,7 +994,7 @@ bool MMU2::unload() {
   if (!_enabled) return false;
 
   if (thermalManager.tooColdToExtrude(active_extruder)) {
-    mmu2_attn_buzz();
+    BUZZ(200, 404);
     LCD_ALERTMESSAGE(MSG_HOTEND_TOO_COLD);
     return false;
   }
@@ -1010,7 +1005,7 @@ bool MMU2::unload() {
   command(MMU_CMD_U0);
   manage_response(false, true);
 
-  mmu2_attn_buzz();
+  BUZZ(200, 404);
 
   // no active tool
   extruder = MMU2_NO_TOOL;
@@ -1031,7 +1026,8 @@ void MMU2::execute_extruder_sequence(const E_Step * sequence, int steps) {
     const float es = pgm_read_float(&(step->extrude));
     const feedRate_t fr_mm_m = pgm_read_float(&(step->feedRate));
 
-    DEBUG_ECHO_MSG("E step ", es, "/", fr_mm_m);
+    DEBUG_ECHO_START();
+    DEBUG_ECHOLNPGM("E step ", es, "/", fr_mm_m);
 
     current_position.e += es;
     line_to_current_position(MMM_TO_MMS(fr_mm_m));

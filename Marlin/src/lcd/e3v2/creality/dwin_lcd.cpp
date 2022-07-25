@@ -49,7 +49,6 @@ void DWIN_Startup() {
   #if DISABLED(SHOW_BOOTSCREEN)
     DWIN_Frame_Clear(Color_Bg_Black); // MarlinUI handles the bootscreen so just clear here
   #endif
-  DWIN_JPG_ShowAndCache(3);
   DWIN_UpdateLCD();
 }
 

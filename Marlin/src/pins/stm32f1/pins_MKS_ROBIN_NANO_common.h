@@ -26,7 +26,7 @@
  */
 
 #if HOTENDS > 2 || E_STEPPERS > 2
-  #error "MKS Robin nano boards support up to 2 hotends / E steppers."
+  #error "MKS Robin nano supports up to 2 hotends / E-steppers. Comment out this line to continue."
 #endif
 
 #define BOARD_NO_NATIVE_USB
@@ -42,9 +42,9 @@
 #endif
 #if EITHER(NO_EEPROM_SELECTED, FLASH_EEPROM_EMULATION)
   #define FLASH_EEPROM_EMULATION
-  #define EEPROM_PAGE_SIZE     (0x800U) // 2K
+  #define EEPROM_PAGE_SIZE     (0x800U) // 2KB
   #define EEPROM_START_ADDRESS (0x8000000UL + (STM32_FLASH_SIZE) * 1024UL - (EEPROM_PAGE_SIZE) * 2UL)
-  #define MARLIN_EEPROM_SIZE    EEPROM_PAGE_SIZE  // 2K
+  #define MARLIN_EEPROM_SIZE    EEPROM_PAGE_SIZE  // 2KB
 #endif
 
 #define SPI_DEVICE                             2
@@ -118,9 +118,7 @@
 //
 #if ENABLED(MKS_PWC)
   #if ENABLED(TFT_LVGL_UI)
-    #if ENABLED(PSU_CONTROL)
-      #error "PSU_CONTROL is incompatible with MKS_PWC plus TFT_LVGL_UI."
-    #endif
+    #undef PSU_CONTROL
     #undef MKS_PWC
     #define SUICIDE_PIN                     PB2
     #define SUICIDE_PIN_STATE               LOW

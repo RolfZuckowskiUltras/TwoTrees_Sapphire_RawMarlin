@@ -121,12 +121,9 @@ void cubic_b_spline(
 
   millis_t next_idle_ms = millis() + 200UL;
 
-  // Hints to help optimize the move
-  PlannerHints hints;
-
   for (float t = 0; t < 1;) {
 
-    thermalManager.task();
+    thermalManager.manage_heater();
     millis_t now = millis();
     if (ELAPSED(now, next_idle_ms)) {
       next_idle_ms = now + 200UL;
@@ -180,7 +177,7 @@ void cubic_b_spline(
       }
     */
 
-    hints.millimeters = new_t - t;
+    step = new_t - t;
     t = new_t;
 
     // Compute and send new position
@@ -191,10 +188,7 @@ void cubic_b_spline(
       interp(position.z, target.z, t),  // FIXME. Wrong, since t is not linear in the distance.
       interp(position.i, target.i, t),  // FIXME. Wrong, since t is not linear in the distance.
       interp(position.j, target.j, t),  // FIXME. Wrong, since t is not linear in the distance.
-      interp(position.k, target.k, t),  // FIXME. Wrong, since t is not linear in the distance.
-      interp(position.u, target.u, t),  // FIXME. Wrong, since t is not linear in the distance.
-      interp(position.v, target.v, t),  // FIXME. Wrong, since t is not linear in the distance.
-      interp(position.w, target.w, t)   // FIXME. Wrong, since t is not linear in the distance.
+      interp(position.k, target.k, t)   // FIXME. Wrong, since t is not linear in the distance.
     );
     apply_motion_limits(new_bez);
     bez_target = new_bez;
@@ -206,7 +200,7 @@ void cubic_b_spline(
       const xyze_pos_t &pos = bez_target;
     #endif
 
-    if (!planner.buffer_line(pos, scaled_fr_mm_s, active_extruder, hints))
+    if (!planner.buffer_line(pos, scaled_fr_mm_s, active_extruder, step))
       break;
   }
 }

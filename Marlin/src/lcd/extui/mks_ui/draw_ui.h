@@ -69,7 +69,6 @@
 #include "draw_max_feedrate_settings.h"
 #include "draw_tmc_step_mode_settings.h"
 #include "draw_level_settings.h"
-#include "draw_z_offset_wizard.h"
 #include "draw_tramming_pos_settings.h"
 #include "draw_auto_level_offset_settings.h"
 #include "draw_filament_change.h"
@@ -236,9 +235,9 @@ typedef struct UI_Config_Struct {
                            eStepMax = 10;
   // Extruder speed (mm/s)
   uint8_t extruSpeed;
-  static constexpr uint8_t eSpeedH = 20,
+  static constexpr uint8_t eSpeedH =  1,
                            eSpeedN = 10,
-                           eSpeedL =  1;
+                           eSpeedL = 20;
   uint8_t print_state;
   uint8_t stepPrintSpeed;
   uint8_t waitEndMoves;
@@ -267,7 +266,6 @@ typedef enum {
   PRINT_FILE_UI,
   PRINTING_UI,
   MOVE_MOTOR_UI,
-  Z_OFFSET_WIZARD_UI,
   OPERATE_UI,
   PAUSE_UI,
   EXTRUSION_UI,

@@ -191,13 +191,13 @@
                    rx_framing_errors;
     static ring_buffer_pos_t rx_max_enqueued;
 
-    FORCE_INLINE static ring_buffer_pos_t atomic_read_rx_head();
+    static FORCE_INLINE ring_buffer_pos_t atomic_read_rx_head();
 
     static volatile bool rx_tail_value_not_stable;
     static volatile uint16_t rx_tail_value_backup;
 
-    FORCE_INLINE static void atomic_set_rx_tail(ring_buffer_pos_t value);
-    FORCE_INLINE static ring_buffer_pos_t atomic_read_rx_tail();
+    static FORCE_INLINE void atomic_set_rx_tail(ring_buffer_pos_t value);
+    static FORCE_INLINE ring_buffer_pos_t atomic_read_rx_tail();
 
   public:
     FORCE_INLINE static void store_rxd_char();

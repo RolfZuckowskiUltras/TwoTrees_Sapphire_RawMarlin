@@ -84,7 +84,7 @@
 #endif
 
 #define Z_MAX_PIN                              7
-#ifndef Z_MIN_PIN
+#ifndef Z_MIN_PIN                              7
   #define Z_MIN_PIN                           10  // Z-
 #endif
 
@@ -157,11 +157,9 @@
 //
 // Průša i3 MK2 Multiplexer Support
 //
-#if HAS_PRUSA_MMU1
-  #define E_MUX0_PIN                          17
-  #define E_MUX1_PIN                          16
-  #define E_MUX2_PIN                          78  // 84 in MK2 Firmware, with BEEPER as 78
-#endif
+#define E_MUX0_PIN                            17
+#define E_MUX1_PIN                            16
+#define E_MUX2_PIN                            78  // 84 in MK2 Firmware, with BEEPER as 78
 
 //
 // LCD / Controller

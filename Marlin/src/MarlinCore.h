@@ -61,8 +61,6 @@ bool printJobOngoing();
 bool printingIsPaused();
 void startOrResumeJob();
 
-bool printer_busy();
-
 extern bool wait_for_heatup;
 
 #if HAS_RESUME_CONTINUE

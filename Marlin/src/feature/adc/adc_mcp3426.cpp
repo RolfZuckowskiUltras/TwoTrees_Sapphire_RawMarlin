@@ -34,7 +34,7 @@
 #include "adc_mcp3426.h"
 
 // Read the ADC value from MCP342X on a specific channel
-int16_t MCP3426::ReadValue(uint8_t channel, uint8_t gain, uint8_t address) {
+int16_t MCP3426::ReadValue(uint8_t channel, uint8_t gain) {
   Error = false;
 
   #if PINS_EXIST(I2C_SCL, I2C_SDA) && DISABLED(SOFT_I2C_EEPROM)
@@ -44,7 +44,7 @@ int16_t MCP3426::ReadValue(uint8_t channel, uint8_t gain, uint8_t address) {
 
   Wire.begin(); // No address joins the BUS as the master
 
-  Wire.beginTransmission(I2C_ADDRESS(address));
+  Wire.beginTransmission(I2C_ADDRESS(MCP342X_ADC_I2C_ADDRESS));
 
   // Continuous Conversion Mode, 16 bit, Channel 1, Gain x4
   // 26 = 0b00011000
@@ -75,7 +75,7 @@ int16_t MCP3426::ReadValue(uint8_t channel, uint8_t gain, uint8_t address) {
   uint8_t buffer[len] = {};
 
   do {
-    Wire.requestFrom(I2C_ADDRESS(address), len);
+    Wire.requestFrom(I2C_ADDRESS(MCP342X_ADC_I2C_ADDRESS), len);
     if (Wire.available() != len) {
       Error = true;
       return 0;

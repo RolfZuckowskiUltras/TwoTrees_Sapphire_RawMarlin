@@ -26,7 +26,7 @@
  */
 
 #if HAS_MULTI_HOTEND
-  #error "K8600 only supports 1 hotend / E stepper."
+  #error "Only 1 hotend is supported for Vertex Nano."
 #endif
 
 #define BOARD_INFO_NAME      "K8600"
@@ -69,7 +69,7 @@
 //
 // LCD / Controller
 //
-#if HAS_WIRED_LCD && IS_NEWPANEL
+#if IS_ULTRA_LCD && IS_NEWPANEL
   #undef BEEPER_PIN
 
   #undef LCD_PINS_RS

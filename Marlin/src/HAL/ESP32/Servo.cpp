@@ -31,18 +31,20 @@
 // so we only allocate servo channels up high to avoid side effects with regards to analogWrite (fans, leds, laser pwm etc.)
 int Servo::channel_next_free = 12;
 
-Servo::Servo() {}
+Servo::Servo() {
+  channel = channel_next_free++;
+}
 
 int8_t Servo::attach(const int inPin) {
+  if (channel >= CHANNEL_MAX_NUM) return -1;
   if (inPin > 0) pin = inPin;
-  channel = get_pwm_channel(pin, 50u, 16u);
-  return channel; // -1 if no PWM avail.
+
+  ledcSetup(channel, 50, 16); // channel X, 50 Hz, 16-bit depth
+  ledcAttachPin(pin, channel);
+  return true;
 }
 
-// leave channel connected to servo - set duty to zero
-void Servo::detach() {
-  if (channel >= 0) ledcWrite(channel, 0);
-}
+void Servo::detach() { ledcDetachPin(pin); }
 
 int Servo::read() { return degrees; }
 
@@ -50,7 +52,7 @@ void Servo::write(int inDegrees) {
   degrees = constrain(inDegrees, MIN_ANGLE, MAX_ANGLE);
   int us = map(degrees, MIN_ANGLE, MAX_ANGLE, MIN_PULSE_WIDTH, MAX_PULSE_WIDTH);
   int duty = map(us, 0, TAU_USEC, 0, MAX_COMPARE);
-  if (channel >= 0) ledcWrite(channel, duty); // don't save duty for servos!
+  ledcWrite(channel, duty);
 }
 
 void Servo::move(const int value) {

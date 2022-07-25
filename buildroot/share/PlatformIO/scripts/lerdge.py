@@ -26,10 +26,10 @@ if pioutil.is_pio_build():
 			input_file[i] = encryptByte(input_file[i])
 		output_file.write(input_file)
 
-	# Encrypt ${PROGNAME}.bin and save it with the name given in build.crypt_lerdge
+	# Encrypt ${PROGNAME}.bin and save it with the name given in build.encrypt
 	def encrypt(source, target, env):
 		fwpath = target[0].path
-		enname = board.get("build.crypt_lerdge")
+		enname = board.get("build.encrypt")
 		print("Encrypting %s to %s" % (fwpath, enname))
 		fwfile = open(fwpath, "rb")
 		enfile = open(target[0].dir.path + "/" + enname, "wb")
@@ -41,9 +41,9 @@ if pioutil.is_pio_build():
 		enfile.close()
 		os.remove(fwpath)
 
-	if 'crypt_lerdge' in board.get("build").keys():
-		if board.get("build.crypt_lerdge") != "":
+	if 'encrypt' in board.get("build").keys():
+		if board.get("build.encrypt") != "":
 			marlin.add_post_action(encrypt)
 	else:
-		print("LERDGE builds require output file via board_build.crypt_lerdge = 'filename' parameter")
+		print("LERDGE builds require output file via board_build.encrypt = 'filename' parameter")
 		exit(1)

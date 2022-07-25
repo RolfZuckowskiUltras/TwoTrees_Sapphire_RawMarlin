@@ -39,7 +39,10 @@
 
 HostUI hostui;
 
+flag_t HostUI::flag;
+
 void HostUI::action(FSTR_P const fstr, const bool eol) {
+  if (!flag.bits) return;
   PORT_REDIRECT(SerialMask::All);
   SERIAL_ECHOPGM("//action:");
   SERIAL_ECHOF(fstr);
@@ -93,18 +96,21 @@ void HostUI::action(FSTR_P const fstr, const bool eol) {
   #endif
 
   void HostUI::notify(const char * const cstr) {
+    if (!flag.bits) return;
     PORT_REDIRECT(SerialMask::All);
     action(F("notification "), false);
     SERIAL_ECHOLN(cstr);
   }
 
   void HostUI::notify_P(PGM_P const pstr) {
+    if (!flag.bits) return;
     PORT_REDIRECT(SerialMask::All);
     action(F("notification "), false);
     SERIAL_ECHOLNPGM_P(pstr);
   }
 
   void HostUI::prompt(FSTR_P const ptype, const bool eol/*=true*/) {
+    if (!flag.bits) return;
     PORT_REDIRECT(SerialMask::All);
     action(F("prompt_"), false);
     SERIAL_ECHOF(ptype);
@@ -112,6 +118,7 @@ void HostUI::action(FSTR_P const fstr, const bool eol) {
   }
 
   void HostUI::prompt_plus(FSTR_P const ptype, FSTR_P const fstr, const char extra_char/*='\0'*/) {
+    if (!flag.bits) return;
     prompt(ptype, false);
     PORT_REDIRECT(SerialMask::All);
     SERIAL_CHAR(' ');
@@ -120,6 +127,7 @@ void HostUI::action(FSTR_P const fstr, const bool eol) {
     SERIAL_EOL();
   }
   void HostUI::prompt_begin(const PromptReason reason, FSTR_P const fstr, const char extra_char/*='\0'*/) {
+    if (!flag.bits) return;
     prompt_end();
     host_prompt_reason = reason;
     prompt_plus(F("begin"), fstr, extra_char);

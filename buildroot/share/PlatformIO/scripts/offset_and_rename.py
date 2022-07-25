@@ -39,15 +39,15 @@ if pioutil.is_pio_build():
 				env["LINKFLAGS"][i] = "-Wl,--defsym=LD_MAX_DATA_SIZE=" + str(maximum_ram_size - 40)
 
 	#
-	# For build.encrypt_mks rename and encode the firmware file.
+	# For build.encrypt rename and encode the firmware file.
 	#
-	if 'encrypt_mks' in board_keys:
+	if 'encrypt' in board_keys:
 
-		# Encrypt ${PROGNAME}.bin and save it with the name given in build.encrypt_mks
+		# Encrypt ${PROGNAME}.bin and save it with the name given in build.encrypt
 		def encrypt(source, target, env):
-			marlin.encrypt_mks(source, target, env, board.get("build.encrypt_mks"))
+			marlin.encrypt_mks(source, target, env, board.get("build.encrypt"))
 
-		if board.get("build.encrypt_mks") != "":
+		if board.get("build.encrypt") != "":
 			marlin.add_post_action(encrypt)
 
 	#
@@ -57,6 +57,6 @@ if pioutil.is_pio_build():
 
 		def rename_target(source, target, env):
 			firmware = os.path.join(target[0].dir.path, board.get("build.rename"))
-			os.replace(target[0].path, firmware)
+			os.rename(target[0].path, firmware)
 
 		marlin.add_post_action(rename_target)

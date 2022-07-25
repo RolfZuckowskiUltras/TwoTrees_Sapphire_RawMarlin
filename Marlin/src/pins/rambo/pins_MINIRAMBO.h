@@ -130,12 +130,10 @@
 //
 // Průša i3 MK2 Multiplexer Support
 //
-#if HAS_PRUSA_MMU1
-  #define E_MUX0_PIN                          17
-  #define E_MUX1_PIN                          16
-  #if !MB(MINIRAMBO_10A)
-    #define E_MUX2_PIN                        78  // 84 in MK2 Firmware, with BEEPER as 78
-  #endif
+#define E_MUX0_PIN                            17
+#define E_MUX1_PIN                            16
+#if !MB(MINIRAMBO_10A)
+  #define E_MUX2_PIN                          78  // 84 in MK2 Firmware, with BEEPER as 78
 #endif
 
 //

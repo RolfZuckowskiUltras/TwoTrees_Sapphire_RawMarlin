@@ -20,10 +20,3 @@
  *
  */
 #pragma once
-
-//
-// Board-specific options need to be defined before HAL.h
-//
-#if MB(MKS_TINYBEE)
-  #define MAX_EXPANDER_BITS 24  // TinyBee has 3 x HC595
-#endif

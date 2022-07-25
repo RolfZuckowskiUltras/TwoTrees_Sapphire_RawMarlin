@@ -36,7 +36,7 @@ void GcodeSuite::M282() {
 
   const int servo_index = parser.value_int();
   if (WITHIN(servo_index, 0, NUM_SERVOS - 1))
-    servo[servo_index].detach();
+    DETACH_SERVO(servo_index);
   else
     SERIAL_ECHO_MSG("Servo ", servo_index, " out of range");
 

@@ -67,17 +67,14 @@ void GcodeSuite::M420() {
       const float x_min = probe.min_x(), x_max = probe.max_x(),
                   y_min = probe.min_y(), y_max = probe.max_y();
       #if ENABLED(AUTO_BED_LEVELING_BILINEAR)
-        xy_pos_t start, spacing;
-        start.set(x_min, y_min);
-        spacing.set((x_max - x_min) / (GRID_MAX_CELLS_X),
-                    (y_max - y_min) / (GRID_MAX_CELLS_Y));
-        bedlevel.set_grid(spacing, start);
+        bilinear_start.set(x_min, y_min);
+        bilinear_grid_spacing.set((x_max - x_min) / (GRID_MAX_CELLS_X),
+                                  (y_max - y_min) / (GRID_MAX_CELLS_Y));
       #endif
       GRID_LOOP(x, y) {
-        bedlevel.z_values[x][y] = 0.001 * random(-200, 200);
-        TERN_(EXTENSIBLE_UI, ExtUI::onMeshUpdate(x, y, bedlevel.z_values[x][y]));
+        Z_VALUES(x, y) = 0.001 * random(-200, 200);
+        TERN_(EXTENSIBLE_UI, ExtUI::onMeshUpdate(x, y, Z_VALUES(x, y)));
       }
-      TERN_(AUTO_BED_LEVELING_BILINEAR, bedlevel.refresh_bed_level());
       SERIAL_ECHOPGM("Simulated " STRINGIFY(GRID_MAX_POINTS_X) "x" STRINGIFY(GRID_MAX_POINTS_Y) " mesh ");
       SERIAL_ECHOPGM(" (", x_min);
       SERIAL_CHAR(','); SERIAL_ECHO(y_min);
@@ -101,7 +98,7 @@ void GcodeSuite::M420() {
       set_bed_leveling_enabled(false);
 
       #if ENABLED(EEPROM_SETTINGS)
-        const int8_t storage_slot = parser.has_value() ? parser.value_int() : bedlevel.storage_slot;
+        const int8_t storage_slot = parser.has_value() ? parser.value_int() : ubl.storage_slot;
         const int16_t a = settings.calc_num_meshes();
 
         if (!a) {
@@ -116,7 +113,7 @@ void GcodeSuite::M420() {
         }
 
         settings.load_mesh(storage_slot);
-        bedlevel.storage_slot = storage_slot;
+        ubl.storage_slot = storage_slot;
 
       #else
 
@@ -128,10 +125,10 @@ void GcodeSuite::M420() {
 
     // L or V display the map info
     if (parser.seen("LV")) {
-      bedlevel.display_map(parser.byteval('T'));
+      ubl.display_map(parser.byteval('T'));
       SERIAL_ECHOPGM("Mesh is ");
-      if (!bedlevel.mesh_is_valid()) SERIAL_ECHOPGM("in");
-      SERIAL_ECHOLNPGM("valid\nStorage slot: ", bedlevel.storage_slot);
+      if (!ubl.mesh_is_valid()) SERIAL_ECHOPGM("in");
+      SERIAL_ECHOLNPGM("valid\nStorage slot: ", ubl.storage_slot);
     }
 
   #endif // AUTO_BED_LEVELING_UBL
@@ -148,7 +145,7 @@ void GcodeSuite::M420() {
         #if ENABLED(AUTO_BED_LEVELING_UBL)
 
           set_bed_leveling_enabled(false);
-          bedlevel.adjust_mesh_to_mean(true, cval);
+          ubl.adjust_mesh_to_mean(true, cval);
 
         #else
 
@@ -156,7 +153,7 @@ void GcodeSuite::M420() {
 
             // Get the sum and average of all mesh values
             float mesh_sum = 0;
-            GRID_LOOP(x, y) mesh_sum += bedlevel.z_values[x][y];
+            GRID_LOOP(x, y) mesh_sum += Z_VALUES(x, y);
             const float zmean = mesh_sum / float(GRID_MAX_POINTS);
 
           #else // midrange
@@ -164,7 +161,7 @@ void GcodeSuite::M420() {
             // Find the low and high mesh values.
             float lo_val = 100, hi_val = -100;
             GRID_LOOP(x, y) {
-              const float z = bedlevel.z_values[x][y];
+              const float z = Z_VALUES(x, y);
               NOMORE(lo_val, z);
               NOLESS(hi_val, z);
             }
@@ -178,10 +175,10 @@ void GcodeSuite::M420() {
             set_bed_leveling_enabled(false);
             // Subtract the mean from all values
             GRID_LOOP(x, y) {
-              bedlevel.z_values[x][y] -= zmean;
-              TERN_(EXTENSIBLE_UI, ExtUI::onMeshUpdate(x, y, bedlevel.z_values[x][y]));
+              Z_VALUES(x, y) -= zmean;
+              TERN_(EXTENSIBLE_UI, ExtUI::onMeshUpdate(x, y, Z_VALUES(x, y)));
             }
-            TERN_(AUTO_BED_LEVELING_BILINEAR, bedlevel.refresh_bed_level());
+            TERN_(ABL_BILINEAR_SUBDIVISION, bed_level_virt_interpolate());
           }
 
         #endif
@@ -202,10 +199,11 @@ void GcodeSuite::M420() {
     #else
       if (leveling_is_valid()) {
         #if ENABLED(AUTO_BED_LEVELING_BILINEAR)
-          bedlevel.print_leveling_grid();
+          print_bilinear_leveling_grid();
+          TERN_(ABL_BILINEAR_SUBDIVISION, print_bilinear_leveling_grid_virt());
         #elif ENABLED(MESH_BED_LEVELING)
           SERIAL_ECHOLNPGM("Mesh Bed Level data:");
-          bedlevel.report_mesh();
+          mbl.report_mesh();
         #endif
       }
     #endif

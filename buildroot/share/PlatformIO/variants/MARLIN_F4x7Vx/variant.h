@@ -153,13 +153,13 @@ extern "C" {
 // Timer Definitions
 // Use TIM6/TIM7 when possible as servo and tone don't need GPIO output pin
 #ifndef TIMER_TONE
-  #define TIMER_TONE            TIM6  // TIMER_TONE must be defined in this file
+  #define TIMER_TONE            TIM6
 #endif
 #ifndef TIMER_SERVO
-  #define TIMER_SERVO           TIM7  // TIMER_SERVO must be defined in this file
+  #define TIMER_SERVO           TIM7
 #endif
 #ifndef TIMER_SERIAL
-  #define TIMER_SERIAL          TIM5  // TIMER_SERIAL must be defined in this file
+  #define TIMER_SERIAL          TIM5
 #endif
 
 // UART Definitions
