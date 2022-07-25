@@ -28,7 +28,6 @@
 #endif
 
 #include HAL_PATH(.,HAL.h)
-extern MarlinHAL hal;
 
 #define HAL_ADC_RANGE _BV(HAL_ADC_RESOLUTION)
 
@@ -45,3 +44,7 @@ extern MarlinHAL hal;
 #ifndef PGMSTR
   #define PGMSTR(NAM,STR) const char NAM[] = STR
 #endif
+
+inline void watchdog_refresh() {
+  TERN_(USE_WATCHDOG, HAL_watchdog_refresh());
+}

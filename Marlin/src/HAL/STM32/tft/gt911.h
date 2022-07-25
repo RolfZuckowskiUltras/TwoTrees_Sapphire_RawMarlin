@@ -23,7 +23,7 @@
 
 #include "../../../inc/MarlinConfig.h"
 
-#define GT911_SLAVE_ADDRESS   0x28
+#define GT911_SLAVE_ADDRESS   0xBA
 
 #if !PIN_EXISTS(GT911_RST)
   #error "GT911_RST_PIN is not defined."

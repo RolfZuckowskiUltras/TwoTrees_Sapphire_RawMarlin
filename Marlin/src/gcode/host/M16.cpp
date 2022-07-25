@@ -26,7 +26,6 @@
 
 #include "../gcode.h"
 #include "../../MarlinCore.h"
-#include "../../lcd/marlinui.h"
 
 /**
  * M16: Expected Printer Check
@@ -38,4 +37,4 @@ void GcodeSuite::M16() {
 
 }
 
-#endif // EXPECTED_PRINTER_CHECK
+#endif

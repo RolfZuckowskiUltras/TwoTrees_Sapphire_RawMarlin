@@ -22,7 +22,7 @@
 
 #include "../inc/MarlinConfig.h"
 
-#if HAS_BEEPER
+#if USE_BEEPER
 
 #include "buzzer.h"
 #include "../module/temperature.h"
@@ -45,17 +45,17 @@ Buzzer buzzer;
  * @param frequency Frequency of the tone in hertz
  */
 void Buzzer::tone(const uint16_t duration, const uint16_t frequency/*=0*/) {
-  if (!ui.sound_on) return;
+  if (!ui.buzzer_enabled) return;
   while (buffer.isFull()) {
     tick();
-    thermalManager.task();
+    thermalManager.manage_heater();
   }
   tone_t tone = { duration, frequency };
   buffer.enqueue(tone);
 }
 
 void Buzzer::tick() {
-  if (!ui.sound_on) return;
+  if (!ui.buzzer_enabled) return;
   const millis_t now = millis();
 
   if (!state.endtime) {
@@ -81,4 +81,4 @@ void Buzzer::tick() {
   else if (ELAPSED(now, state.endtime)) reset();
 }
 
-#endif // HAS_BEEPER
+#endif // USE_BEEPER

@@ -31,11 +31,16 @@
 using namespace FTDI;
 using namespace Theme;
 
-#define GRID_COLS 3
-#define GRID_ROWS 16
+#if ENABLED(TOUCH_UI_PORTRAIT)
+  #define GRID_ROWS 16
+#else
+  #define GRID_ROWS 16
+#endif
 
 void StatusScreen::draw_axis_position(draw_mode_t what) {
   CommandProcessor cmd;
+
+  #define GRID_COLS 3
 
   #if ENABLED(TOUCH_UI_PORTRAIT)
     #define X_LBL_POS  BTN_POS(1, 9), BTN_SIZE(1,2)
@@ -101,10 +106,15 @@ void StatusScreen::draw_axis_position(draw_mode_t what) {
        .text(Y_VAL_POS, y_str)
        .text(Z_VAL_POS, z_str);
   }
+
+  #undef GRID_COLS
 }
 
-#undef GRID_COLS
-#define GRID_COLS TERN(TOUCH_UI_PORTRAIT, 8, 12)
+#if ENABLED(TOUCH_UI_PORTRAIT)
+  #define GRID_COLS 8
+#else
+  #define GRID_COLS 12
+#endif
 
 void StatusScreen::draw_temperature(draw_mode_t what) {
   using namespace Theme;
@@ -283,10 +293,11 @@ void StatusScreen::draw_progress(draw_mode_t what) {
          .text(PROGRESS_POS, progress_str);
     #endif
   }
+
+  #undef GRID_COLS
 }
 
 void StatusScreen::draw_interaction_buttons(draw_mode_t what) {
-  #undef GRID_COLS
   #define GRID_COLS 4
   if (what & FOREGROUND) {
     using namespace ExtUI;
@@ -310,10 +321,10 @@ void StatusScreen::draw_interaction_buttons(draw_mode_t what) {
        .colors(!has_media ? action_btn : normal_btn)
        .tag(4).button(MENU_BTN_POS, GET_TEXT_F(MSG_BUTTON_MENU));
   }
+  #undef  GRID_COLS
 }
 
 void StatusScreen::draw_status_message(draw_mode_t what, const char *message) {
-  #undef  GRID_COLS
   #define GRID_COLS 1
 
   #if ENABLED(TOUCH_UI_PORTRAIT)
@@ -330,16 +341,13 @@ void StatusScreen::draw_status_message(draw_mode_t what, const char *message) {
 
     draw_text_box(cmd, STATUS_POS, message, OPT_CENTER, font_large);
   }
+  #undef  GRID_COLS
 }
 
-void StatusScreen::setStatusMessage(FSTR_P fmsg) {
-  #ifdef __AVR__
-    char buff[strlen_P(FTOP(fmsg)) + 1];
-    strcpy_P(buff, FTOP(fmsg));
-    setStatusMessage((const char *)buff);
-  #else
-    setStatusMessage(FTOP(fmsg));
-  #endif
+void StatusScreen::setStatusMessage(FSTR_P message) {
+  char buff[strlen_P((const char * const)message)+1];
+  strcpy_P(buff, (const char * const) message);
+  setStatusMessage((const char *) buff);
 }
 
 void StatusScreen::setStatusMessage(const char *message) {

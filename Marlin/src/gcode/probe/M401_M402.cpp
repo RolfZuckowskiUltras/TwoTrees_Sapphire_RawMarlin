@@ -36,18 +36,12 @@
  * M401: Deploy and activate the Z probe
  *
  * With BLTOUCH_HS_MODE:
- *  H       Report the current BLTouch HS mode state and exit
  *  S<bool> Set High Speed (HS) Mode and exit without deploy
  */
 void GcodeSuite::M401() {
-  const bool seenH = parser.seen_test('H'),
-             seenS = parser.seen('S');
-  if (seenH || seenS) {
+  if (parser.seen('S')) {
     #ifdef BLTOUCH_HS_MODE
-      if (seenS) bltouch.high_speed_mode = parser.value_bool();
-      SERIAL_ECHO_START();
-      SERIAL_ECHOPGM("BLTouch HS mode ");
-      serialprintln_onoff(bltouch.high_speed_mode);
+      bltouch.high_speed_mode = parser.value_bool();
     #endif
   }
   else {

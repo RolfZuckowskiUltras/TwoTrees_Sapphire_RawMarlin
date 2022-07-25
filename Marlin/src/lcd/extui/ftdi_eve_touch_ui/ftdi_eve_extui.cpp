@@ -80,7 +80,7 @@ namespace ExtUI {
   }
 
   void onPrintTimerPaused() {}
-  void onPrintDone() {}
+  void onPrintFinished() {}
 
   void onFilamentRunout(const extruder_t extruder) {
     char lcd_msg[30];
@@ -90,14 +90,14 @@ namespace ExtUI {
   }
 
   void onHomingStart() {}
-  void onHomingDone() {}
+  void onHomingComplete() {}
 
   void onFactoryReset() { InterfaceSettingsScreen::defaultSettings(); }
   void onStoreSettings(char *buff) { InterfaceSettingsScreen::saveSettings(buff); }
   void onLoadSettings(const char *buff) { InterfaceSettingsScreen::loadSettings(buff); }
   void onPostprocessSettings() {} // Called after loading or resetting stored settings
 
-  void onSettingsStored(bool success) {
+  void onConfigurationStoreWritten(bool success) {
     #ifdef ARCHIM2_SPI_FLASH_EEPROM_BACKUP_SIZE
       if (success && InterfaceSettingsScreen::backupEEPROM()) {
         SERIAL_ECHOLNPGM("EEPROM backed up to SPI Flash");
@@ -106,7 +106,7 @@ namespace ExtUI {
       UNUSED(success);
     #endif
   }
-  void onSettingsLoaded(bool) {}
+  void onConfigurationStoreRead(bool) {}
 
   void onPlayTone(const uint16_t frequency, const uint16_t duration) { sound.play_tone(frequency, duration); }
 
@@ -118,8 +118,7 @@ namespace ExtUI {
   }
 
   #if HAS_LEVELING && HAS_MESH
-    void onLevelingStart() {}
-    void onLevelingDone() {}
+    void onMeshLevelingStart() {}
     void onMeshUpdate(const int8_t x, const int8_t y, const_float_t val) { BedMeshViewScreen::onMeshUpdate(x, y, val); }
     void onMeshUpdate(const int8_t x, const int8_t y, const ExtUI::probe_state_t state) { BedMeshViewScreen::onMeshUpdate(x, y, state); }
   #endif

@@ -37,7 +37,6 @@
 
   #undef STATUS_HEATERS_X
   #undef STATUS_BED_X
-
   /**
    * Custom _Statusscreen.h files can define:
    * - A custom logo image

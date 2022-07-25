@@ -154,7 +154,9 @@
       //#define SHIFT_EN_PIN               P1_22  // (41)  J5-4 & AUX-4
     #endif
 
-    #if EITHER(VIKI2, miniVIKI)
+    #if ANY(VIKI2, miniVIKI)
+      //#define LCD_SCREEN_ROT_180
+
       #define BEEPER_PIN                   P1_30  // (37) may change if cable changes
       #define DOGLCD_CS                    P0_26  // (63) J5-3 & AUX-2
       #define DOGLCD_SCK              SD_SCK_PIN
@@ -162,8 +164,6 @@
 
       #define STAT_LED_BLUE_PIN            P0_26  // (63)  may change if cable changes
       #define STAT_LED_RED_PIN             P1_21  // ( 6)  may change if cable changes
-
-      //#define LCD_SCREEN_ROTATE            180  // 0, 90, 180, 270
     #else
       #if IS_ULTIPANEL
         #define LCD_PINS_D5                P1_17  // (71) ENET_MDIO
@@ -180,7 +180,11 @@
     #endif
 
     #if ENABLED(MINIPANEL)
-      //#define LCD_SCREEN_ROTATE            180  // 0, 90, 180, 270
+      // GLCD features
+      // Uncomment screen orientation
+      //#define LCD_SCREEN_ROT_90
+      //#define LCD_SCREEN_ROT_180
+      //#define LCD_SCREEN_ROT_270
     #endif
 
   #endif

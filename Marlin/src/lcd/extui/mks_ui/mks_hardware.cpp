@@ -160,8 +160,6 @@
     #endif
   }
 
-  #include "../../../libs/buzzer.h"
-
   void init_test_gpio() {
     endstops.init();
 
@@ -203,7 +201,12 @@
     #endif
   }
 
-  void mks_test_beeper() { buzzer.click(100); }
+  void mks_test_beeper() {
+    WRITE(BEEPER_PIN, HIGH);
+    delay(100);
+    WRITE(BEEPER_PIN, LOW);
+    delay(100);
+  }
 
   #if ENABLED(SDSUPPORT)
 
@@ -711,16 +714,12 @@ void disp_assets_update() {
 }
 
 void disp_assets_update_progress(FSTR_P const fmsg) {
-  #ifdef __AVR__
-    static constexpr int buflen = 30;
-    char buf[buflen];
-    memset(buf, ' ', buflen);
-    strncpy_P(buf, FTOP(fmsg), buflen - 1);
-    buf[buflen - 1] = '\0';
-    disp_string(100, 165, buf, 0xFFFF, 0x0000);
-  #else
-    disp_string(100, 165, FTOP(fmsg), 0xFFFF, 0x0000);
-  #endif
+  static constexpr int buflen = 30;
+  char buf[buflen];
+  memset(buf, ' ', buflen);
+  strncpy_P(buf, FTOP(fmsg), buflen - 1);
+  buf[buflen - 1] = '\0';
+  disp_string(100, 165, buf, 0xFFFF, 0x0000);
 }
 
 #if BOTH(MKS_TEST, SDSUPPORT)

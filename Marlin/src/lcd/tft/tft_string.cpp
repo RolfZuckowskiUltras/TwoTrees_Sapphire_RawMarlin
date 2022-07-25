@@ -35,7 +35,7 @@
 glyph_t *TFT_String::glyphs[256];
 font_t *TFT_String::font_header;
 
-char TFT_String::data[];
+uint8_t TFT_String::data[];
 uint16_t TFT_String::span;
 uint8_t TFT_String::length;
 
@@ -84,22 +84,24 @@ void TFT_String::set() {
   length = 0;
 }
 
+uint8_t read_byte(uint8_t *byte) { return *byte; }
+
 /**
  * Add a string, applying substitutions for the following characters:
  *
- *   $ displays the string given by fstr or cstr
+ *   $ displays an inserted C-string given by the itemString parameter
  *   = displays  '0'....'10' for indexes 0 - 10
  *   ~ displays  '1'....'11' for indexes 0 - 10
  *   * displays 'E1'...'E11' for indexes 0 - 10 (By default. Uses LCD_FIRST_TOOL)
  *   @ displays an axis name such as XYZUVW, or E for an extruder
  */
-void TFT_String::add(const char *tpl, const int8_t index, const char *cstr/*=nullptr*/, FSTR_P const fstr/*=nullptr*/) {
-  lchar_t wc;
+void TFT_String::add(uint8_t *string, int8_t index, uint8_t *itemString/*=nullptr*/) {
+  wchar_t wchar;
 
-  while (*tpl) {
-    tpl = get_utf8_value_cb(tpl, read_byte_ram, wc);
-    if (wc > 255) wc |= 0x0080;
-    const uint8_t ch = uint8_t(wc & 0x00FF);
+  while (*string) {
+    string = get_utf8_value_cb(string, read_byte, &wchar);
+    if (wchar > 255) wchar |= 0x0080;
+    uint8_t ch = uint8_t(wchar & 0x00FF);
 
     if (ch == '=' || ch == '~' || ch == '*') {
       if (index >= 0) {
@@ -109,33 +111,31 @@ void TFT_String::add(const char *tpl, const int8_t index, const char *cstr/*=nul
         add_character('0' + inum);
       }
       else
-        add(index == -2 ? GET_TEXT_F(MSG_CHAMBER) : GET_TEXT_F(MSG_BED));
+        add(index == -2 ? GET_TEXT(MSG_CHAMBER) : GET_TEXT(MSG_BED));
     }
-    else if (ch == '$' && fstr)
-      add(fstr);
-    else if (ch == '$' && cstr)
-      add(cstr);
+    else if (ch == '$' && itemString)
+      add(itemString);
     else if (ch == '@')
-      add_character(AXIS_CHAR(index));
+      add_character(axis_codes[index]);
     else
       add_character(ch);
   }
   eol();
 }
 
-void TFT_String::add(const char *cstr, uint8_t max_len/*=MAX_STRING_LENGTH*/) {
-  lchar_t wc;
-  while (*cstr && max_len) {
-    cstr = get_utf8_value_cb(cstr, read_byte_ram, wc);
-    if (wc > 255) wc |= 0x0080;
-    const uint8_t ch = uint8_t(wc & 0x00FF);
+void TFT_String::add(uint8_t *string, uint8_t max_len) {
+  wchar_t wchar;
+  while (*string && max_len) {
+    string = get_utf8_value_cb(string, read_byte, &wchar);
+    if (wchar > 255) wchar |= 0x0080;
+    uint8_t ch = uint8_t(wchar & 0x00FF);
     add_character(ch);
     max_len--;
   }
   eol();
 }
 
-void TFT_String::add_character(const char character) {
+void TFT_String::add_character(uint8_t character) {
   if (length < MAX_STRING_LENGTH) {
     data[length] = character;
     length++;
@@ -143,7 +143,7 @@ void TFT_String::add_character(const char character) {
   }
 }
 
-void TFT_String::rtrim(const char character) {
+void TFT_String::rtrim(uint8_t character) {
   while (length) {
     if (data[length - 1] == 0x20 || data[length - 1] == character) {
       length--;
@@ -155,7 +155,7 @@ void TFT_String::rtrim(const char character) {
   }
 }
 
-void TFT_String::ltrim(const char character) {
+void TFT_String::ltrim(uint8_t character) {
   uint16_t i, j;
   for (i = 0; (i < length) && (data[i] == 0x20 || data[i] == character); i++) {
     span -= glyph(data[i])->DWidth;
@@ -166,7 +166,7 @@ void TFT_String::ltrim(const char character) {
   eol();
 }
 
-void TFT_String::trim(const char character) {
+void TFT_String::trim(uint8_t character) {
   rtrim(character);
   ltrim(character);
 }

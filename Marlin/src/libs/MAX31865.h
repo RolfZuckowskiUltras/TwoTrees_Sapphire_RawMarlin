@@ -73,6 +73,13 @@
 #define MAX31865_FAULT_RTDINLOW 0x08    // D3
 #define MAX31865_FAULT_OVUV 0x04        // D2
 
+// http://www.analog.com/media/en/technical-documentation/application-notes/AN709_0.pdf
+// constants for calculating temperature from the measured RTD resistance.
+#define RTD_Z1 -0.0039083
+#define RTD_Z2 0.00001758480889
+#define RTD_Z3 -0.0000000231
+#define RTD_Z4 -0.000001155
+
 typedef enum max31865_numwires {
   MAX31865_2WIRE = 0,
   MAX31865_3WIRE = 1,
@@ -94,9 +101,13 @@ private:
 
   TERN(LARGE_PINMAP, uint32_t, uint8_t) sclkPin, misoPin, mosiPin, cselPin;
 
-  uint16_t spiDelay;
+  #ifdef TARGET_LPC1768
+    uint8_t spiSpeed;
+  #else
+    uint16_t spiDelay;
+  #endif
 
-  float resNormalizer, refRes, wireRes;
+  float zeroRes, refRes, wireRes;
 
   #if ENABLED(MAX31865_USE_READ_ERROR_DETECTION)
     millis_t lastReadStamp = 0;
@@ -110,11 +121,6 @@ private:
     one_shot_event_t nextEvent;
   #endif
 
-  #ifdef MAX31865_IGNORE_INITIAL_FAULTY_READS
-    uint8_t ignore_faults = MAX31865_IGNORE_INITIAL_FAULTY_READS;
-    uint16_t fixFault(uint16_t rtd);
-  #endif
-
   uint8_t stdFlags = 0;
 
   void setConfig(uint8_t config, bool enable);
@@ -124,12 +130,9 @@ private:
   uint16_t readRegister16(uint8_t addr);
 
   void writeRegister8(uint8_t addr, uint8_t reg);
-  void writeRegister16(uint8_t addr, uint16_t reg);
-
-  void softSpiInit();
-  void spiBeginTransaction();
   uint8_t spiTransfer(uint8_t addr);
-  void spiEndTransaction();
+
+  void softSpiBegin(const uint8_t spi_speed);
 
   void initFixedFlags(max31865_numwires_t wires);
 
@@ -137,10 +140,6 @@ private:
   void enableBias();
   void oneShot();
   void resetFlags();
-
-  uint16_t readRawImmediate();
-
-  void runAutoFaultDetectionCycle();
 
 public:
   #if ENABLED(LARGE_PINMAP)
@@ -153,7 +152,7 @@ public:
              int8_t spi_clk);
   #endif
 
-  void begin(max31865_numwires_t wires, const_float_t zero_res, const_float_t ref_res, const_float_t wire_res);
+  void begin(max31865_numwires_t wires, float zero_res, float ref_res, float wire_res);
 
   uint8_t readFault();
   void clearFault();
@@ -161,6 +160,6 @@ public:
   uint16_t readRaw();
   float readResistance();
   float temperature();
-  float temperature(const uint16_t adc_val);
+  float temperature(uint16_t adc_val);
   float temperature(float rtd_res);
 };

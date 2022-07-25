@@ -33,11 +33,9 @@
 // I2S (steppers & other output-only pins)
 //
 #define I2S_STEPPER_STREAM
-#if ENABLED(I2S_STEPPER_STREAM)
-  #define I2S_WS                              25
-  #define I2S_BCK                             26
-  #define I2S_DATA                            27
-#endif
+#define I2S_WS                                25
+#define I2S_BCK                               26
+#define I2S_DATA                              27
 
 //
 // Limit Switches

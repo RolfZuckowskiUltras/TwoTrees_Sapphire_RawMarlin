@@ -43,9 +43,7 @@ public:
   }
 
   constexpr SerialMask(const uint8_t mask) : mask(mask) {}
-  constexpr SerialMask(const SerialMask &rs) : mask(rs.mask) {} // Can't use = default here since not all frameworks support this
-
-  SerialMask& operator=(const SerialMask &rs) { mask = rs.mask; return *this; }
+  constexpr SerialMask(const SerialMask & other) : mask(other.mask) {} // Can't use = default here since not all framework support this
 
   static constexpr uint8_t All = 0xFF;
 };
@@ -300,7 +298,7 @@ struct MultiSerial : public SerialBase< MultiSerial< REPEAT(NUM_SERIAL, _S_NAME)
 // Build the actual serial object depending on current configuration
 #define Serial1Class TERN(SERIAL_RUNTIME_HOOK, RuntimeSerial, BaseSerial)
 #define ForwardSerial1Class TERN(SERIAL_RUNTIME_HOOK, RuntimeSerial, ForwardSerial)
-#if HAS_MULTI_SERIAL
+#ifdef HAS_MULTI_SERIAL
   #define Serial2Class ConditionalSerial
   #if NUM_SERIAL >= 3
     #define Serial3Class ConditionalSerial

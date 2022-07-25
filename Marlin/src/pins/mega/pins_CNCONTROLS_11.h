@@ -135,20 +135,17 @@
 //
 // LCD / Controller
 //
-#if HAS_WIRED_LCD
-  #define BEEPER_PIN                           6
+#define BEEPER_PIN                             6
 
-  #define BTN_EN1                             23
-  #define BTN_EN2                             25
-  #define BTN_ENC                             27
+// Pins for DOGM SPI LCD Support
+#define DOGLCD_A0                             26
+#define DOGLCD_CS                             24
+#define DOGLCD_MOSI                           -1  // Prevent auto-define by Conditionals_post.h
+#define DOGLCD_SCK                            -1
 
-  #if HAS_MARLINUI_U8GLIB
-    #define DOGLCD_A0                         26
-    #define DOGLCD_CS                         24
-    #define DOGLCD_MOSI                       -1  // Prevent auto-define by Conditionals_post.h
-    #define DOGLCD_SCK                        -1
-  #endif
-#endif
+#define BTN_EN1                               23
+#define BTN_EN2                               25
+#define BTN_ENC                               27
 
 // Hardware buttons for manual movement of XYZ
 #define SHIFT_OUT_PIN                         19

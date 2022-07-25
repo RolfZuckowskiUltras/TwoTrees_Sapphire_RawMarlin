@@ -25,7 +25,7 @@
 #include "env_validate.h"
 
 #if HOTENDS > 2 || E_STEPPERS > 2
-  #error "LERDGE S supports up to 2 hotends / E steppers."
+  #error "LERDGE S supports up to 2 hotends / E-steppers."
 #endif
 
 #define BOARD_INFO_NAME      "Lerdge S"
@@ -133,10 +133,8 @@
 //
 // Průša i3 MK2 Multi Material Multiplexer Support
 //
-#if HAS_PRUSA_MMU1
-  //#define E_MUX0_PIN                      -1
-  //#define E_MUX1_PIN                      -1
-#endif
+//#define E_MUX0_PIN                        -1
+//#define E_MUX1_PIN                        -1
 
 //
 // LED / Lighting
@@ -186,15 +184,15 @@
   #define EEPROM_SCK_PIN                    PB13  // datasheet: CLK pin, found with multimeter, not tested
   #define EEPROM_MISO_PIN                   PB14  // datasheet: DO pin, found with multimeter, not tested
   #define EEPROM_MOSI_PIN                   PB15  // datasheet: DI pin, found with multimeter, not tested
-  #define EEPROM_PAGE_SIZE               0x1000U  // 4K (from datasheet)
-  #define MARLIN_EEPROM_SIZE 16UL * (EEPROM_PAGE_SIZE)  // Limit to 64K for now...
+  #define EEPROM_PAGE_SIZE               0x1000U  // 4KB (from datasheet)
+  #define MARLIN_EEPROM_SIZE 16UL * (EEPROM_PAGE_SIZE)   // Limit to 64KB for now...
 #elif ENABLED(I2C_EEPROM)                         // FM24CL64BG (CYP1813) 64Kbit F-RAM
   #define SOFT_I2C_EEPROM                         // Force the use of Software I2C
   #define I2C_SDA_PIN                       PG13
   #define I2C_SCL_PIN                       PG14  // To be confirmed on the Lerdge S, but probably same as the K
-  #define MARLIN_EEPROM_SIZE             0x2000U  // 8K
+  #define MARLIN_EEPROM_SIZE             0x10000
 #else
-  #define MARLIN_EEPROM_SIZE              0x800U  // On SD, Limit to 2K, require this amount of RAM
+  #define MARLIN_EEPROM_SIZE              0x800U  // On SD, Limit to 2KB, require this amount of RAM
 #endif
 
 //
